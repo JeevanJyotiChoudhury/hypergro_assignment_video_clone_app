@@ -17,3 +17,17 @@
 -> Like the video.
 
 -> Add comment to the video.
+
+# Installation and getting started
+
+-> Clone the app : git clone https://github.com/JeevanJyotiChoudhury/hypergro_assignment_video_clone_app.git -> cd hypergro_assignment_video_clone_app
+
+# Tech stacks
+
+    -> React
+    -> TypeScript
+    -> Tailwind CSS
+
+# Demo Video
+
+-> URL : https://drive.google.com/drive/folders/13tVoJqXBdZKEu89pCEnvjwKyjgKnsM6N?usp=drive_link
