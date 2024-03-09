@@ -9,11 +9,12 @@ interface Props {
 
 const Pagination: React.FC<Props> = ({ currentPage, handlePagination }) => {
   return (
-    <div className="flex justify-center mt-8">
+    <div className="flex justify-center mt-8 items-center gap-4">
       <PreviousPage
         currentPage={currentPage}
         handlePagination={handlePagination}
       />
+      <h3 className="font-bold text-xl">{currentPage}</h3>
       <NextPage currentPage={currentPage} handlePagination={handlePagination} />
     </div>
   );

@@ -3,10 +3,12 @@ import axios from "axios";
 import VideoCard from "./VideoCard";
 import Pagination from "./Pagination";
 import { VideoType } from "../types/types";
+import Loading from "./Loading";
 
 function VideoList() {
   const [videos, setVideos] = useState<VideoType[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchVideos();
@@ -14,6 +16,7 @@ function VideoList() {
 
   const fetchVideos = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         `https://internship-service.onrender.com/videos?page=${currentPage}`
       );
@@ -39,8 +42,10 @@ function VideoList() {
         };
       });
       setVideos(updatedPosts);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching videos:", error);
+      setLoading(false);
     }
   };
 
@@ -52,12 +57,25 @@ function VideoList() {
     const updatedVideos = videos.map((video) => {
       if (video.postId === postId) {
         const localStorageKey = `likes_${postId}`;
-        const updatedLikes = video.likes + 1;
+        let updatedLikes;
+
+        const currentLikes = video.likes;
+        const likedStatus = localStorage.getItem(`likedStatus_${postId}`);
+
+        if (likedStatus === "true") {
+          updatedLikes = currentLikes - 1;
+          localStorage.setItem(`likedStatus_${postId}`, "false");
+        } else {
+          updatedLikes = currentLikes + 1;
+          localStorage.setItem(`likedStatus_${postId}`, "true");
+        }
+
         localStorage.setItem(localStorageKey, updatedLikes.toString());
         return { ...video, likes: updatedLikes };
       }
       return video;
     });
+
     setVideos(updatedVideos);
   };
 
@@ -92,17 +110,20 @@ function VideoList() {
   return (
     <div className="w-full bg-gray-500 text-white">
       <div className="container mx-auto py-8 w-[95%]">
-        <h1 className="text-3xl font-bold mb-8">Trending Videos</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {videos.map((video) => (
-            <VideoCard
-              key={video.postId}
-              video={video}
-              handleLike={handleLike}
-              handleComment={handleComment}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {videos.map((video) => (
+              <VideoCard
+                key={video.postId}
+                video={video}
+                handleLike={handleLike}
+                handleComment={handleComment}
+              />
+            ))}
+          </div>
+        )}
         <Pagination
           handlePagination={handlePagination}
           currentPage={currentPage}
